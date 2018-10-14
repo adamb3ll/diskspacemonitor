@@ -61,7 +61,7 @@ def push_notification(event, message):
     notify_settings = read_pushover_settings("pushover.txt")
     if hasattr(notify_settings, "apptoken"):
         notification_system = "pushover"
-    else:
+    elif hasattr(notify_settings, "apikey"):
         notification_system = "prowl"
         notify_settings = read_prowl_settings("prowl.txt")
 
