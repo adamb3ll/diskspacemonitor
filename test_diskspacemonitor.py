@@ -18,18 +18,6 @@ class TestDiskSpaceMonitor(unittest.TestCase):
         test_args = ["also", "correct"]
         self.assertEqual(diskspacemonitor.parse_args(test_args), 1)
 
-    @unittest.mock.patch('shutil.disk_usage')
-    def test_get_disk_space(self, mock_shutil):
-        """Test get disk space"""
-        testval = {"used": 100, "total": 200, "free": 300}
-        mock_shutil.return_value = testval
-        self.assertEqual(diskspacemonitor.get_disk_space("anything"), testval)
-
-    @unittest.mock.patch('shutil.disk_usage', side_effect=IOError())
-    def test_get_disk_space_fail(self, mock_shutil):
-        """Test fail to get disk space"""
-        self.assertEqual(diskspacemonitor.get_disk_space("anything"), 0)
-
     def test_get_notification_percentages_nofile(self):
         """Test get a list of the notifications"""
         percentages = diskspacemonitor.get_notification_percentages("")
@@ -53,14 +41,6 @@ class TestDiskSpaceMonitor(unittest.TestCase):
         self.assertEqual(diskspacemonitor.get_last_notification_value("testfile.txt"), 50)
 
 # Do a test for file
-
-    def test_get_disk_space_percentage(self):
-        """Test get the disk space percentage"""
-        TestType = namedtuple('Point', ['used', 'total', 'free'])
-        testval = TestType(100, 200, 100)
-        self.assertEqual(diskspacemonitor.get_disk_space_percentage(testval), 50)
-        testval = TestType(100, 400, 300)
-        self.assertEqual(diskspacemonitor.get_disk_space_percentage(testval), 75)
 
     def test_parse_threshold(self):
         """Test if a value falls less than a range"""
