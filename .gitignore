@@ -106,3 +106,4 @@ last.txt
 prowl.txt
 pushover.txt
 .DS_Store
+*.dsm

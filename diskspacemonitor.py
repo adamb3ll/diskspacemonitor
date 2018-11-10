@@ -77,11 +77,12 @@ def main(argv):
 
     space = diskspace.get_disk_space(disk)
     if space != 0:
-        lastval = get_last_notification_value("last.txt")
+        filename = disk_id + "_last.dsm"
+        lastval = get_last_notification_value(filename)
         notification_prefs = get_notification_percentages("prefs.txt")
         newval = process_disk_space(space, lastval, notification_prefs)
         if newval != -1:
-            set_last_notification("last.txt", newval)
+            set_last_notification(filename, newval)
             if newval != 100:
                 pushnotifications.push_notification(disk_id + " Disk Milestone Reached", "Disk free space is now below " + str(newval) + "%")
     else:
