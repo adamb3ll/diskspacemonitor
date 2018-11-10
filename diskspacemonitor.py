@@ -70,7 +70,7 @@ def main(argv):
     """"Main function"""
     disk = "/"
     disk_id = "Computer"
-    if parse_args(argv) == 1 and len(argv) == 1:
+    if parse_args(argv) == 1 and len(argv) == 2:
         disk = argv[0]
     if parse_args(argv) == 1 and len(argv) == 2:
         disk_id = argv[1]
