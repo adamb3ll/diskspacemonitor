@@ -1,6 +1,7 @@
 """Unit test for disk space monitor"""
 
 import unittest
+import sys
 from collections import namedtuple
 from unittest.mock import Mock
 import diskspacemonitor
@@ -73,4 +74,5 @@ class TestDiskSpaceMonitor(unittest.TestCase):
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(TestDiskSpaceMonitor)
-    unittest.TextTestRunner(verbosity=2).run(SUITE)
+    RESULT = unittest.TextTestRunner(verbosity=2).run(SUITE)
+    sys.exit(not RESULT.wasSuccessful())
