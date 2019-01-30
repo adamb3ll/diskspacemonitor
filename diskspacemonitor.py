@@ -6,18 +6,11 @@ import os
 from collections import namedtuple
 import requests
 import pushnotifications
+import diskspace
 
 def parse_args(argv):
     """Confirm params are correct"""
     return len(argv) == 1 or len(argv) == 2
-
-def get_disk_space(disk):
-    """Get the disk space and return if Successful"""
-    try:
-        usage = shutil.disk_usage(disk)
-        return usage
-    except IOError:
-        return 0
 
 def get_notification_percentages(filename):
     """Get a list of the percentages of when there should be a notification"""
@@ -56,11 +49,6 @@ def set_last_notification(filename, value):
     except IOError:
         return 0
 
-def get_disk_space_percentage(disk_space):
-    """Get the disk space remaining as a percentage"""
-    perc = (disk_space.free * 100) / disk_space.total
-    return perc
-
 def parse_threshold_list(parselist, current):
     """Parse where the value lands on the require threshold"""
     for index in range(len(parselist)):
@@ -71,7 +59,7 @@ def parse_threshold_list(parselist, current):
 def process_disk_space(space, lastval, notification_percs):
     """Process all the data, is space getting low and must notify"""
     if space != 0:
-        perc = get_disk_space_percentage(space)
+        perc = diskspace.get_disk_space_percentage(space)
         newval = parse_threshold_list(notification_percs, perc)
         if newval < lastval:
             return newval
@@ -82,18 +70,19 @@ def main(argv):
     """"Main function"""
     disk = "/"
     disk_id = "Computer"
-    if parse_args(argv) == 1 and len(argv) == 1:
+    if parse_args(argv) == 1 and len(argv) == 2:
         disk = argv[0]
     if parse_args(argv) == 1 and len(argv) == 2:
         disk_id = argv[1]
 
-    space = get_disk_space(disk)
+    space = diskspace.get_disk_space(disk)
     if space != 0:
-        lastval = get_last_notification_value("last.txt")
+        filename = disk_id + "_last.dsm"
+        lastval = get_last_notification_value(filename)
         notification_prefs = get_notification_percentages("prefs.txt")
         newval = process_disk_space(space, lastval, notification_prefs)
         if newval != -1:
-            set_last_notification("last.txt", newval)
+            set_last_notification(filename, newval)
             if newval != 100:
                 pushnotifications.push_notification(disk_id + " Disk Milestone Reached", "Disk free space is now below " + str(newval) + "%")
     else:
