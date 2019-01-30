@@ -73,13 +73,9 @@ def process_disk_space(space, lastval, notification_percs):
     if space != 0:
         perc = get_disk_space_percentage(space)
         newval = parse_threshold_list(notification_percs, perc)
-        print(newval)
-        print(lastval)
-        if newval > lastval:
-            return -newval
         if newval < lastval:
             return newval
-        return 0
+        return -1
     return 100
 
 def main(argv):
@@ -96,9 +92,7 @@ def main(argv):
         lastval = get_last_notification_value("last.txt")
         notification_prefs = get_notification_percentages("prefs.txt")
         newval = process_disk_space(space, lastval, notification_prefs)
-        if newval != 0:
-            if newval < 0:
-                newval = -newval
+        if newval != -1:
             set_last_notification("last.txt", newval)
             if newval != 100:
                 pushnotifications.push_notification(disk_id + " Disk Milestone Reached", "Disk free space is now below " + str(newval) + "%")

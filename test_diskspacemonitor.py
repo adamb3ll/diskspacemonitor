@@ -82,17 +82,14 @@ class TestDiskSpaceMonitor(unittest.TestCase):
         percentages = sorted(percentages)
         TestType = namedtuple('Point', ['used', 'total', 'free'])
         testval = TestType(0, 200, 200)
-        self.assertEqual(diskspacemonitor.process_disk_space(testval, 0, percentages), -100)
+        self.assertEqual(diskspacemonitor.process_disk_space(testval, 0, percentages), -1)
         testval = TestType(150, 200, 50)
-        self.assertEqual(diskspacemonitor.process_disk_space(testval, 0, percentages), -25)
+        self.assertEqual(diskspacemonitor.process_disk_space(testval, 0, percentages), -1)
         # Testing that the last val was 50, new val is at 50% threshold, so return 0
         self.assertEqual(diskspacemonitor.process_disk_space(testval, 50, percentages), 25)
         testval = TestType(100, 200, 100)
         # Testing that the last val was 75, new val is at 50% threshold, so return 1
         self.assertEqual(diskspacemonitor.process_disk_space(testval, 75, percentages), 50)
-        # Testing that the last val was less than the new one - disk has been emptied
-        testval = TestType(100, 200, 100)
-        self.assertEqual(diskspacemonitor.process_disk_space(testval, 10, percentages), -50)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(TestDiskSpaceMonitor)
